@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini API Biblioteczne</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+    <h1>Mini API Biblioteczne</h1>
+</header>
+
+<main>
+    <section id="login-forma">
+        <h2>Login</h2>
+        <form id="login-form">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username"><br><br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password"><br><br>
+            <button id="login-btn" type="submit">Login</button>
+        </form>
+    </section>
+
+    <section id="endpoints">
+        <h2>API Endpoints</h2>
+        <ul>
+            <li><strong>GET</strong> <code>/api/books</code> – Get all books</li>
+            <li><strong>POST</strong> <code>/api/books</code> – Create a new book</li>
+            <li><strong>GET</strong> <code>/api/books/{id}</code> – Get a book by ID</li>
+            <li><strong>PUT</strong> <code>/api/books/{id}</code> – Update a book by ID</li>
+            <li><strong>DELETE</strong> <code>/api/books/{id}</code> – Delete a book by ID</li>
+            <li><strong>GET</strong> <code>/api/books/search?title=Example</code> – Search books by title</li>
+            <li><strong>GET</strong> <code>/api/books/search?author=Example</code> – Search books by author</li>
+        </ul>
+    </section>
+</main>
+
+<script src="../script.js"></script>
+</body>
+</html>
