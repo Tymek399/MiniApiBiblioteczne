@@ -2,32 +2,61 @@ package com.example.miniapibiblioteczne.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
+        MvcRequestMatcher h2ConsoleMatcher = new MvcRequestMatcher(introspector, "/h2-console/**");
+
         http
-                .authorizeHttpRequests(authorizeRequests ->
-                        authorizeRequests
-                                .requestMatchers("/admin/**").hasRole("ADMIN")  // Only allow users with ADMIN role
-                                .requestMatchers("/api/books/**").hasAnyRole("USER", "ADMIN")  // Allow USER and ADMIN roles for /api/books
-                                .anyRequest().permitAll()  // Allow all other requests
+                .authorizeHttpRequests((authorize) -> authorize
+                        .requestMatchers(h2ConsoleMatcher).permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+
+                        // Książki
+                        .requestMatchers(HttpMethod.GET, "/api/books/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/books/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/books/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/books/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/books/**").hasRole("ADMIN")
+
+                        // Wypożyczenia
+                        .requestMatchers(HttpMethod.POST, "/api/borrowings/borrow").hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, "/api/borrowings/return/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/api/borrowings/history/**").hasAnyRole("USER", "ADMIN")
+
+                        // Użytkownicy
+                        .requestMatchers(HttpMethod.POST, "/api/users/register").permitAll() // rejestracja bez logowania
+                        .requestMatchers("/api/users/**").hasAnyRole("USER", "ADMIN")
+
+                        .anyRequest().authenticated()
                 )
-                .formLogin(Customizer.withDefaults())  // Default login page will be used here
-                .httpBasic(Customizer.withDefaults());  // Enable basic authentication if required
+                .formLogin(withDefaults())
+                .httpBasic(withDefaults())
+                .csrf((csrf) -> csrf
+                        .ignoringRequestMatchers(h2ConsoleMatcher)
+                        .ignoringRequestMatchers("/api/books/**")
+                        .ignoringRequestMatchers("/api/borrowings/**")
+                        .ignoringRequestMatchers("/api/users/**")
+                        .disable()
+                );
 
         return http.build();
     }
@@ -46,7 +75,13 @@ public class WebSecurityConfig {
                 .roles("ADMIN")
                 .build();
 
-        return new InMemoryUserDetailsManager(user, admin);
+        UserDetails superadmin = User.builder()
+                .username("superadmin")
+                .password(passwordEncoder.encode("hard"))
+                .roles("ADMIN")
+                .build();
+
+        return new InMemoryUserDetailsManager(user, admin, superadmin);
     }
 
     @Bean

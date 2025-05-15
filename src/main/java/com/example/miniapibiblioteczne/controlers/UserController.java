@@ -1,9 +1,13 @@
 package com.example.miniapibiblioteczne.controlers;
 
+import com.example.miniapibiblioteczne.dto.BorrowingDto;
 import com.example.miniapibiblioteczne.model.User;
+import com.example.miniapibiblioteczne.service.BorrowingService;
 import com.example.miniapibiblioteczne.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,10 +20,12 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final BorrowingService borrowingService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, BorrowingService borrowingService) {
         this.userService = userService;
+        this.borrowingService = borrowingService;
     }
 
     // Rejestracja użytkownika
@@ -29,15 +35,6 @@ public class UserController {
         return ResponseEntity.ok(registeredUser);
     }
 
-    // Logowanie użytkownika
-    @PostMapping("/login")
-    public ResponseEntity<String> authenticateUser(@RequestParam String userName, @RequestParam String password) {
-        String token = userService.authenticateUser(userName, password);
-        if (token.equals("Invalid credentials")) {
-            return ResponseEntity.status(401).body("Invalid credentials");
-        }
-        return ResponseEntity.ok(token);
-    }
 
     // Pobieranie użytkownika po ID
     @GetMapping("/{id}")
@@ -65,4 +62,12 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
+
+    // Historia wypożyczeń użytkownika po ID
+    @GetMapping("/{username}/borrowings")
+    public ResponseEntity<List<BorrowingDto>> getUserBorrowingHistory(@PathVariable String username) {
+        List<BorrowingDto> history = borrowingService.getUserBorrowingHistory(username);
+        return ResponseEntity.ok(history);
+    }
+
 }

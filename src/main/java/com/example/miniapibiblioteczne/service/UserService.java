@@ -26,16 +26,6 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    // Autoryzacja użytkownika
-    public String authenticateUser(String userName, String password) {
-        // W tej metodzie można dodać logikę autoryzacji, np. porównanie hasła z zapisanym hasłem
-        Optional<User> userOpt = userRepository.findByUserName(userName);
-        if (userOpt.isPresent() && userOpt.get().getPassword().equals(password)) {
-            // Możesz dodać generowanie tokenu JWT tutaj
-            return "Token"; // Placeholder token
-        }
-        return "Invalid credentials";
-    }
 
     // Pobieranie wszystkich użytkowników
     public List<User> getAllUsers() {

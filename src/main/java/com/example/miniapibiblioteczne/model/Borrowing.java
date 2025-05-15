@@ -5,8 +5,8 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "borrowedBooks")
-public class BorrowBook {
+@Table(name = "borrowings")
+public class Borrowing {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -68,11 +68,11 @@ public class BorrowBook {
         this.dueDate = dueDate;
     }
 
-    public LocalDate getReturnedDate() {
+    public LocalDate getReturnDate() {
         return returnDate;
     }
 
-    public void setReturnedDate(LocalDate returnDate) {
+    public void setReturnDate(LocalDate returnDate) {
         this.returnDate = returnDate;
     }
 
