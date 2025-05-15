@@ -23,11 +23,9 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
-        MvcRequestMatcher h2ConsoleMatcher = new MvcRequestMatcher(introspector, "/h2-console/**");
 
         http
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers(h2ConsoleMatcher).permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
 
                         // Książki
@@ -51,7 +49,6 @@ public class WebSecurityConfig {
                 .formLogin(withDefaults())
                 .httpBasic(withDefaults())
                 .csrf((csrf) -> csrf
-                        .ignoringRequestMatchers(h2ConsoleMatcher)
                         .ignoringRequestMatchers("/api/books/**")
                         .ignoringRequestMatchers("/api/borrowings/**")
                         .ignoringRequestMatchers("/api/users/**")
