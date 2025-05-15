@@ -1,0 +1,25 @@
+POST http://localhost:8080/api/books
+{
+  "title": "Nowa Książka",
+  "author": "Jan Dzban",
+  "isbn": "978-1342567120",
+  "publicationYear": 2025
+}
+GET http://localhost:8080/api/books
+GET http://localhost:8080/api/books/1
+GET http://localhost:8080/api/books/search?title=1984
+GET http://localhost:8080/api/books/search?author=George Orwell
+POST http://localhost:8080/api/borrowings/borrow
+{
+  "userId": 2,
+  "bookId": 1
+}
+POST http://localhost:8080/api/borrowings/return/1
+GET http://localhost:8080/api/borrowings/history?username=user
+POST http://localhost:8080/api/users/register
+{
+  "username": "nowy_user",
+  "password": "haslo123",
+  "email": "nowy@example.com"
+}
+GET http://localhost:8080/api/users/1
