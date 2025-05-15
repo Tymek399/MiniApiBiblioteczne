@@ -1,9 +1,12 @@
 package com.example.miniapibiblioteczne.service;
 
 import com.example.miniapibiblioteczne.model.Book;
+import com.example.miniapibiblioteczne.model.BookCopy;
 import com.example.miniapibiblioteczne.model.Status;
 import com.example.miniapibiblioteczne.repository.BookCopyRepository;
 import com.example.miniapibiblioteczne.repository.BookRepository;
+import com.example.miniapibiblioteczne.repository.BorrowingRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,11 +16,13 @@ import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 @Service
 public class BookService {
     private final BookCopyRepository bookCopyRepository;
+    private final BorrowingRepository borrowingRepository;
     private BookRepository bookRepository;
 
-    public BookService(BookRepository bookRepository, BookCopyRepository bookCopyRepository) {
+    public BookService(BookRepository bookRepository, BookCopyRepository bookCopyRepository, BorrowingRepository borrowingRepository) {
         this.bookRepository = bookRepository;
         this.bookCopyRepository = bookCopyRepository;
+        this.borrowingRepository = borrowingRepository;
     }
 
     public Book addBook(Book book) {
@@ -56,8 +61,36 @@ public class BookService {
     }
 
 
-    public long getAvailableCopies(Book book) {
-        return bookCopyRepository.countByBookAndStatus(book, Status.AVAILABLE);
+    public boolean getAvailableCopies(Long bookCopyId) {
+        BookCopy copy = bookCopyRepository.findById(bookCopyId)
+                .orElseThrow(() -> new EntityNotFoundException("Book copy not found"));
+
+        if (copy.getStatus() != Status.AVAILABLE) {
+            return false;
+        }
+
+        boolean isCurrentlyBorrowed = borrowingRepository.existsByBookCopyIdAndReturnDateIsNull(bookCopyId);
+        return !isCurrentlyBorrowed;
     }
+    public boolean hasAvailableCopies(Book book) {
+        List<BookCopy> copies = bookCopyRepository.findByBook(book);
+        for (BookCopy copy : copies) {
+            if (copy.getStatus() == Status.AVAILABLE &&
+                    !borrowingRepository.existsByBookCopyIdAndReturnDateIsNull(copy.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public long countAvailableCopies(Book book) {
+        List<BookCopy> copies = bookCopyRepository.findByBook(book);
+
+        return copies.stream()
+                .filter(copy -> copy.getStatus() == Status.AVAILABLE)
+                .filter(copy -> !borrowingRepository.existsByBookCopyIdAndReturnDateIsNull(copy.getId()))
+                .count();
+    }
+
 }
 

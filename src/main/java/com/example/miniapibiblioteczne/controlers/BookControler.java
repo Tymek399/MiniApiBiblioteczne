@@ -88,7 +88,7 @@ public class BookControler {
         }
 
         List<BookInfo> bookInfos = books.stream()
-                .map(book -> new BookInfo(book.getTitle(), book.getAuthor(), bookService.getAvailableCopies(book)))
+                .map(book -> new BookInfo(book.getTitle(), book.getAuthor(), bookService.hasAvailableCopies(book)))
                 .toList();
 
         return ResponseEntity.ok(bookInfos);

@@ -3,21 +3,37 @@ package com.example.miniapibiblioteczne.dto;
 public class BookInfo {
     private String title;
     private String author;
-    private long copiesAvailable;
+    private boolean available;
 
-    public BookInfo(String title, String author, long copiesAvailable) {
+    public BookInfo(String title, String author, boolean available) {
         this.title = title;
         this.author = author;
-        this.copiesAvailable = copiesAvailable;
+        this.available = available;
     }
 
+    // Gettery i settery
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public String getTitle() {
+        return title;
+    }
 
-    public String getAuthor() { return author; }
-    public void setAuthor(String author) { this.author = author; }
+    public String getAuthor() {
+        return author;
+    }
 
-    public long getCopiesAvailable() { return copiesAvailable; }
-    public void setCopiesAvailable(long copiesAvailable) { this.copiesAvailable = copiesAvailable; }
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
 }

@@ -1,6 +1,7 @@
 package com.example.miniapibiblioteczne.repository;
 
 import com.example.miniapibiblioteczne.model.Book;
+import com.example.miniapibiblioteczne.model.BookCopy;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
