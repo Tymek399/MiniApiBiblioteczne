@@ -15,18 +15,18 @@ INSERT INTO books (title, author, isbn, publication_year) VALUES
 ('Moby-Dick', 'Herman Melville', '9781503280786', 1851);
 
 -- Kopie książek
-INSERT INTO book_copies (book_id, status) VALUES
-(1, 'AVAILABLE'),
-(1, 'BORROWED'),
-(2, 'AVAILABLE'),
-(3, 'AVAILABLE'),
-(4, 'AVAILABLE'),
-(4, 'AVAILABLE'),
-(5, 'BORROWED'),
-(6, 'AVAILABLE'),
-(7, 'AVAILABLE'),
-(7, 'BORROWED'),
-(8, 'AVAILABLE');
+INSERT INTO book_copies (book_id, title, author, status) VALUES
+(1, '1984', 'George Orwell', 'AVAILABLE'),
+(1, '1984', 'George Orwell', 'BORROWED'),
+(2, 'Brave New World', 'Aldous Huxley', 'AVAILABLE'),
+(3, 'To Kill a Mockingbird', 'Harper Lee', 'AVAILABLE'),
+(4, 'The Great Gatsby', 'F. Scott Fitzgerald', 'AVAILABLE'),
+(4, 'The Great Gatsby', 'F. Scott Fitzgerald', 'AVAILABLE'),
+(5, 'The Catcher in the Rye', 'J.D. Salinger', 'BORROWED'),
+(6, 'Fahrenheit 451', 'Ray Bradbury', 'AVAILABLE'),
+(7, 'Animal Farm', 'George Orwell', 'AVAILABLE'),
+(7, 'Animal Farm', 'George Orwell', 'BORROWED'),
+(8, 'Moby-Dick', 'Herman Melville', 'AVAILABLE');
 
 -- Wypożyczenia
 INSERT INTO borrowings (book_copy_id, user_id, borrow_date, due_date, return_date) VALUES

@@ -21,11 +21,6 @@ public class BookCopy {
     public BookCopy() {
     }
 
-    public BookCopy(Book book, Status status) {
-        this.book = book;
-        this.status = status;
-    }
-
     public Long getId() {
         return id;
     }
@@ -38,9 +33,6 @@ public class BookCopy {
         return book;
     }
 
-    public void setBook(Book book) {
-        this.book = book;
-    }
 
     public Status getStatus() {
         return status;
@@ -49,4 +41,6 @@ public class BookCopy {
     public void setStatus(Status status) {
         this.status = status;
     }
+
+
 }

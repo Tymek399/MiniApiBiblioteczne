@@ -22,6 +22,8 @@ CREATE TABLE books (
 CREATE TABLE book_copies (
                              id BIGINT AUTO_INCREMENT PRIMARY KEY,
                              book_id BIGINT,
+                             title VARCHAR(255),
+                             author VARCHAR(255),
                              status VARCHAR(20),
                              CONSTRAINT fk_book FOREIGN KEY (book_id) REFERENCES books(id)
 );
