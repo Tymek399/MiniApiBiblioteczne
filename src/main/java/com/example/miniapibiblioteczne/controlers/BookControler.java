@@ -1,7 +1,7 @@
 package com.example.miniapibiblioteczne.controlers;
 
 import com.example.miniapibiblioteczne.dto.BookInfo;
-import com.example.miniapibiblioteczne.model.Book;
+import com.example.miniapibiblioteczne.encje.Book;
 import com.example.miniapibiblioteczne.repository.BookRepository;
 import com.example.miniapibiblioteczne.service.BookService;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -97,4 +97,5 @@ public class BookControler {
     public BookRepository getBookRepository() {
         return bookRepository;
     }
+
 }

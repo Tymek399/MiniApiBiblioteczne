@@ -1,5 +1,6 @@
-package com.example.miniapibiblioteczne.model;
+package com.example.miniapibiblioteczne.encje;
 
+import com.example.miniapibiblioteczne.enums.Status;
 import jakarta.persistence.*;
 
 @Entity

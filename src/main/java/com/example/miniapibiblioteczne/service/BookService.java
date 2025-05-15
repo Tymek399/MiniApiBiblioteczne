@@ -1,8 +1,8 @@
 package com.example.miniapibiblioteczne.service;
 
-import com.example.miniapibiblioteczne.model.Book;
-import com.example.miniapibiblioteczne.model.BookCopy;
-import com.example.miniapibiblioteczne.model.Status;
+import com.example.miniapibiblioteczne.encje.Book;
+import com.example.miniapibiblioteczne.encje.BookCopy;
+import com.example.miniapibiblioteczne.enums.Status;
 import com.example.miniapibiblioteczne.repository.BookCopyRepository;
 import com.example.miniapibiblioteczne.repository.BookRepository;
 import com.example.miniapibiblioteczne.repository.BorrowingRepository;
@@ -12,12 +12,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 @Service
 public class BookService {
     private final BookCopyRepository bookCopyRepository;
     private final BorrowingRepository borrowingRepository;
-    private BookRepository bookRepository;
+    private final BookRepository bookRepository;
 
     public BookService(BookRepository bookRepository, BookCopyRepository bookCopyRepository, BorrowingRepository borrowingRepository) {
         this.bookRepository = bookRepository;
@@ -61,17 +60,6 @@ public class BookService {
     }
 
 
-    public boolean getAvailableCopies(Long bookCopyId) {
-        BookCopy copy = bookCopyRepository.findById(bookCopyId)
-                .orElseThrow(() -> new EntityNotFoundException("Book copy not found"));
-
-        if (copy.getStatus() != Status.AVAILABLE) {
-            return false;
-        }
-
-        boolean isCurrentlyBorrowed = borrowingRepository.existsByBookCopyIdAndReturnDateIsNull(bookCopyId);
-        return !isCurrentlyBorrowed;
-    }
     public boolean hasAvailableCopies(Book book) {
         List<BookCopy> copies = bookCopyRepository.findByBook(book);
         for (BookCopy copy : copies) {

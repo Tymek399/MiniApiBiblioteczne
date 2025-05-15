@@ -1,8 +1,8 @@
 package com.example.miniapibiblioteczne;
 
-import com.example.miniapibiblioteczne.model.Book;
-import com.example.miniapibiblioteczne.model.BookCopy;
-import com.example.miniapibiblioteczne.model.Status;
+import com.example.miniapibiblioteczne.encje.Book;
+import com.example.miniapibiblioteczne.encje.BookCopy;
+import com.example.miniapibiblioteczne.enums.Status;
 import com.example.miniapibiblioteczne.repository.BookCopyRepository;
 import com.example.miniapibiblioteczne.repository.BookRepository;
 import com.example.miniapibiblioteczne.repository.BorrowingRepository;

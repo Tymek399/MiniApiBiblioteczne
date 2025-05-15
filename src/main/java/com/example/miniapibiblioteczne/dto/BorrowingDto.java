@@ -1,6 +1,6 @@
 package com.example.miniapibiblioteczne.dto;
 
-import com.example.miniapibiblioteczne.model.Borrowing;
+import com.example.miniapibiblioteczne.encje.Borrowing;
 
 import java.time.LocalDate;
 

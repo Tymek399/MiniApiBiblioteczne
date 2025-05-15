@@ -2,7 +2,7 @@ package com.example.miniapibiblioteczne.dto;
 
 import javax.validation.constraints.NotNull;
 
-;
+
 public class BorrowRequestDto {
 
     @NotNull(message = "ID użytkownika nie może być puste")
@@ -19,7 +19,6 @@ public class BorrowRequestDto {
         this.bookId = bookId;
     }
 
-    // Gettery i settery
 
     public Long getUserId() {
         return userId;

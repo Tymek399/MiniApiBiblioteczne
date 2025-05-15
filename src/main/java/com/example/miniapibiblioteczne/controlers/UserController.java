@@ -1,13 +1,11 @@
 package com.example.miniapibiblioteczne.controlers;
 
 import com.example.miniapibiblioteczne.dto.BorrowingDto;
-import com.example.miniapibiblioteczne.model.User;
+import com.example.miniapibiblioteczne.encje.User;
 import com.example.miniapibiblioteczne.service.BorrowingService;
 import com.example.miniapibiblioteczne.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 

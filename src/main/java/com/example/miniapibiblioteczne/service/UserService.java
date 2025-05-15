@@ -1,6 +1,6 @@
 package com.example.miniapibiblioteczne.service;
 
-import com.example.miniapibiblioteczne.model.User;
+import com.example.miniapibiblioteczne.encje.User;
 import com.example.miniapibiblioteczne.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
