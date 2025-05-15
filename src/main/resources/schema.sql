@@ -1,3 +1,8 @@
+DROP TABLE IF EXISTS borrowings;
+DROP TABLE IF EXISTS book_copies;
+DROP TABLE IF EXISTS books;
+DROP TABLE IF EXISTS users;
+
 CREATE TABLE users (
                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
                        username VARCHAR(255) UNIQUE,
