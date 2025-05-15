@@ -9,6 +9,7 @@ public class BorrowingDto {
     private Long userId;
     private Long bookCopyId;
     private String bookTitle;
+    private String author;
     private LocalDate borrowDate;
     private LocalDate dueDate;
     private LocalDate returnDate;
@@ -19,12 +20,20 @@ public class BorrowingDto {
         dto.setUserId(borrowing.getUser().getId());
         dto.setBookCopyId(borrowing.getBookCopy().getId());
         dto.setBookTitle(borrowing.getBookCopy().getBook().getTitle());
+        dto.setBookAuthor(borrowing.getBookCopy().getBook().getAuthor());
         dto.setBorrowDate(borrowing.getBorrowDate());
         dto.setDueDate(borrowing.getDueDate());
         dto.setReturnDate(borrowing.getReturnDate());
         return dto;
     }
 
+    public String getBookAuthor() {
+        return author;
+    }
+
+    public void setBookAuthor(String author) {
+        this.author = author;
+    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

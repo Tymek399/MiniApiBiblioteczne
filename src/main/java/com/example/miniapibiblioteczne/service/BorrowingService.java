@@ -32,7 +32,7 @@ public class BorrowingService {
     }
 
     public BorrowingDto borrowBook(BorrowRequestDto borrowRequest) {
-        // Walidacja parametrów wejściowych
+
         if (borrowRequest.getUserId() == null) {
             throw new IllegalArgumentException("User ID must not be null");
         }
@@ -76,11 +76,10 @@ public class BorrowingService {
             throw new IllegalStateException("Book already returned");
         }
 
-        // Ustaw datę zwrotu
         borrowing.setReturnDate(LocalDate.now());
         borrowingRepository.save(borrowing);
 
-        // Zmień status kopii książki na dostępny
+
         BookCopy copy = borrowing.getBookCopy();
         copy.setStatus(Status.AVAILABLE);
         bookCopyRepository.save(copy);

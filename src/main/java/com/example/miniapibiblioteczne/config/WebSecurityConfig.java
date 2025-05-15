@@ -71,13 +71,9 @@ public class WebSecurityConfig {
                 .roles("ADMIN")
                 .build();
 
-        UserDetails superadmin = User.builder()
-                .username("superadmin")
-                .password(passwordEncoder.encode("hard"))
-                .roles("ADMIN")
-                .build();
 
-        return new InMemoryUserDetailsManager(user, admin, superadmin);
+
+        return new InMemoryUserDetailsManager(user, admin);
     }
 
     @Bean

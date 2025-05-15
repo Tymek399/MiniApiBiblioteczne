@@ -1,7 +1,7 @@
 -- Użytkownicy
 INSERT INTO users (username, password, role, email) VALUES
 ('admin', '{noop}admin123', 'ADMIN', 'admin@lib.pl'),
-('john_doe', '{noop}reader123', 'USER', 'john@example.com');
+('user', '{noop}user123', 'USER', 'user@example.com');
 
 -- Książki
 INSERT INTO books (title, author, isbn, publication_year) VALUES
