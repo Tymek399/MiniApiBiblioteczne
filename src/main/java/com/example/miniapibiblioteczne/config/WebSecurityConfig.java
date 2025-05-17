@@ -26,6 +26,7 @@ public class WebSecurityConfig {
 
         http
                 .authorizeHttpRequests((authorize) -> authorize
+                        .requestMatchers("/", "/login.html", "/index.html").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
 
                         // Książki
@@ -41,18 +42,24 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/borrowings/history/**").hasAnyRole("USER", "ADMIN")
 
                         // Użytkownicy
-                        .requestMatchers(HttpMethod.POST, "/api/users/register").permitAll() // rejestracja bez logowania
+                        .requestMatchers(HttpMethod.POST, "/api/users/register").permitAll()
                         .requestMatchers("/api/users/**").hasAnyRole("USER", "ADMIN")
 
                         .anyRequest().authenticated()
                 )
-                .formLogin(withDefaults())
+                .formLogin(form -> form
+                        .loginPage("/login.html")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/index.html", true)
+                        .failureUrl("/login.html?error=true")
+                        .permitAll()
+                )
                 .httpBasic(withDefaults())
-                .csrf(AbstractHttpConfigurer::disable
-                );
+                .csrf(AbstractHttpConfigurer::disable);
 
         return http.build();
     }
+
 
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {

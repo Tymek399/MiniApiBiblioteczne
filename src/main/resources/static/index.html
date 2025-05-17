@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8" />
+    <title>Obsługa API Biblioteki</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100 p-6">
+<h1 class="text-3xl font-semibold text-center text-blue-700 mb-8">Biblioteka</h1>
+<div class="text-right mb-4">
+    <button onclick="logout()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Wyloguj</button>
+</div>
+<div class="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+
+    <!-- Dodaj książkę -->
+    <form onsubmit="addBook(event)" class="bg-white p-4 rounded shadow space-y-3">
+        <h2 class="text-xl font-semibold mb-2">Dodaj książkę</h2>
+        <input id="title" type="text" placeholder="Tytuł" class="border p-2 w-full" required minlength="2" />
+        <input id="author" type="text" placeholder="Autor" class="border p-2 w-full" required />
+        <input id="isbn" type="text" placeholder="ISBN (np. 9781234567897)" class="border p-2 w-full"
+               pattern="^(97(8|9))?\d{9}(\d|X)$" title="Nieprawidłowy format ISBN" required />
+        <input id="publicationYear" type="number" placeholder="Rok publikacji (>=1450)" class="border p-2 w-full"
+               min="1450" required />
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Dodaj</button>
+        <div id="add-error" class="text-red-600 text-sm"></div>
+    </form>
+
+    <!-- Szukaj książki -->
+    <form onsubmit="searchBooks(event)" class="bg-white p-4 rounded shadow">
+        <h2 class="text-xl font-semibold mb-2">Szukaj książki</h2>
+        <input id="search-title" type="text" placeholder="Tytuł" class="border p-2 w-full mb-2" />
+        <input id="search-author" type="text" placeholder="Autor" class="border p-2 w-full mb-2" />
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Szukaj</button>
+        <div id="search-results" class="mt-4 text-sm text-gray-700"></div>
+    </form>
+
+    <!-- Wypożycz książkę -->
+    <form onsubmit="rentBook(event)" class="bg-white p-4 rounded shadow">
+        <h2 class="text-xl font-semibold mb-2">Wypożycz książkę</h2>
+        <input id="rent-book-id" type="number" placeholder="ID książki" class="border p-2 w-full mb-2" required />
+        <input id="rent-user" type="text" placeholder="Użytkownik" class="border p-2 w-full mb-2" required />
+        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Wypożycz</button>
+    </form>
+
+    <!-- Zwróć książkę -->
+    <form onsubmit="returnBook(event)" class="bg-white p-4 rounded shadow">
+        <h2 class="text-xl font-semibold mb-2">Zwróć książkę</h2>
+        <input id="return-book-id" type="number" placeholder="ID książki" class="border p-2 w-full mb-2" required />
+        <input id="return-user" type="text" placeholder="Użytkownik" class="border p-2 w-full mb-2" required />
+        <button type="submit" class="bg-yellow-600 text-white px-4 py-2 rounded">Zwróć</button>
+    </form>
+
+    <!-- Historia wypożyczeń -->
+    <form onsubmit="getHistory(event)" class="bg-white p-4 rounded shadow">
+        <h2 class="text-xl font-semibold mb-2">Historia użytkownika</h2>
+        <input id="history-user" type="text" placeholder="Użytkownik" class="border p-2 w-full mb-2" required />
+        <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded">Pokaż historię</button>
+        <div id="history-results" class="mt-4 text-sm text-gray-700"></div>
+    </form>
+
+</div>
+
+<!-- Wyświetlanie wszystkich książek pod formularzami -->
+<h2 class="text-2xl font-semibold mt-12 mb-4 text-center text-blue-700">Wszystkie książki</h2>
+<div id="all-books" class="max-w-4xl mx-auto bg-white p-6 rounded shadow space-y-3 text-gray-800">
+    Ładowanie...
+</div>
+
+<script>
+    const API = '/api';
+
+    async function fetchData(url, method, body = null) {
+        const options = {
+            method: method,
+            headers: {},
+            credentials: 'include'
+        };
+
+        if (body) {
+            options.headers['Content-Type'] = 'application/json';
+            options.body = JSON.stringify(body);
+        }
+
+        const response = await fetch(url, options);
+        if (!response.ok) {
+            if (response.status === 401 || response.status === 403) {
+                window.location.href = '/login.html';
+                return;
+            }
+            const error = await response.json().catch(() => ({}));
+            throw new Error(error.message || 'Błąd zapytania');
+        }
+
+        return await response.json();
+    }
+
+    async function addBook(event) {
+        event.preventDefault();
+        const errorDiv = document.getElementById('add-error');
+        errorDiv.textContent = '';
+
+        const title = document.getElementById('title').value.trim();
+        const author = document.getElementById('author').value.trim();
+        const isbn = document.getElementById('isbn').value.trim();
+        const publicationYear = parseInt(document.getElementById('publicationYear').value);
+
+        // Prosta walidacja (opcjonalnie można ją rozszerzyć)
+        if (title.length < 2) {
+            errorDiv.textContent = 'Tytuł musi mieć co najmniej 2 znaki.';
+            return;
+        }
+        if (!author) {
+            errorDiv.textContent = 'Autor nie może być pusty.';
+            return;
+        }
+        const isbnPattern = /^(97(8|9))?\d{9}(\d|X)$/;
+        if (!isbnPattern.test(isbn)) {
+            errorDiv.textContent = 'Nieprawidłowy format ISBN.';
+            return;
+        }
+        if (publicationYear < 1450) {
+            errorDiv.textContent = 'Rok publikacji musi być większy lub równy 1450.';
+            return;
+        }
+
+        try {
+            await fetchData(`${API}/books`, 'POST', { title, author, isbn, publicationYear });
+            alert('Książka dodana!');
+            event.target.reset();
+            loadAllBooks();
+        } catch (err) {
+            errorDiv.textContent = err.message;
+        }
+    }
+
+    async function searchBooks(event) {
+        event.preventDefault();
+        const title = document.getElementById('search-title').value;
+        const author = document.getElementById('search-author').value;
+        const resultDiv = document.getElementById('search-results');
+        const response = await fetchData(`${API}/books/search?title=${encodeURIComponent(title)}&author=${encodeURIComponent(author)}`, 'GET');
+        resultDiv.innerHTML = response.map(book => `<div>${book.id}: ${book.title} - ${book.author}</div>`).join('');
+    }
+
+    async function rentBook(event) {
+        event.preventDefault();
+        const bookId = document.getElementById('rent-book-id').value;
+        const user = document.getElementById('rent-user').value;
+        await fetchData(`${API}/books/rent`, 'POST', { bookId, username: user });
+        alert('Wypożyczono książkę!');
+    }
+
+    async function returnBook(event) {
+        event.preventDefault();
+        const bookId = document.getElementById('return-book-id').value;
+        const user = document.getElementById('return-user').value;
+        await fetchData(`${API}/books/return`, 'POST', { bookId, username: user });
+        alert('Zwrócono książkę!');
+    }
+
+    async function getHistory(event) {
+        event.preventDefault();
+        const user = document.getElementById('history-user').value;
+        const resultDiv = document.getElementById('history-results');
+        const response = await fetchData(`${API}/books/history/${encodeURIComponent(user)}`, 'GET');
+        resultDiv.innerHTML = response.map(entry => `<div>${entry.title} (${entry.status})</div>`).join('');
+    }
+
+    function logout() {
+        fetch('/logout', {
+            method: 'POST',
+            credentials: 'include'
+        }).then(() => {
+            window.location.href = '/login.html';
+        });
+    }
+
+    async function checkLogin() {
+        try {
+            await fetchData(`${API}/books`, 'GET');
+        } catch (e) {
+            window.location.href = '/index.html';
+        }
+    }
+
+    async function loadAllBooks() {
+        const container = document.getElementById('all-books');
+        container.textContent = 'Ładowanie...';
+        try {
+            const books = await fetchData(`${API}/books`);
+            if (books.length === 0) {
+                container.textContent = 'Brak książek w bazie.';
+                return;
+            }
+            container.innerHTML = books.map(book => `
+                <div>
+                    <strong>${book.title}</strong> — ${book.author}<br/>
+                    ISBN: ${book.isbn}, Rok: ${book.publicationYear}
+                </div>
+            `).join('');
+        } catch {
+            container.textContent = 'Błąd podczas ładowania książek.';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        checkLogin();
+        loadAllBooks();
+    });
+</script>
+
+</body>
+</html>

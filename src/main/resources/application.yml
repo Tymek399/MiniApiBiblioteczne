@@ -20,7 +20,10 @@ spring:
 
 logging:
   level:
-    org.springframework.security: DEBUG
+    org.springframework:
+    security: DEBUG
+    web: DEBUG
+
 
 server:
-  port: 8081
+  port: 8080
