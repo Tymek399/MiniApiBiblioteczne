@@ -2,42 +2,49 @@ package com.example.miniapibiblioteczne.service;
 
 import com.example.miniapibiblioteczne.encje.User;
 import com.example.miniapibiblioteczne.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
 public class UserService {
 
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
+        this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
-    // Rejestracja użytkownika
     public User registerUser(User user) {
+        if (usernameExists(user.getUserName())) {
+            throw new IllegalArgumentException("Nazwa użytkownika jest już zajęta");
+        }
+        if (emailExists(user.getEmail())) {
+            throw new IllegalArgumentException("Email jest już zajęty");
+        }
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
-
-    // Pobieranie wszystkich użytkowników
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public boolean usernameExists(String username) {
+        return userRepository.existsByUserName(username);
     }
 
-    // Pobieranie użytkownika po ID
+    public boolean emailExists(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
     public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
 
-    // Aktualizacja użytkownika
+
     public User updateUser(Long id, User user) {
         User existingUser = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
         existingUser.setUserName(user.getUserName());
@@ -47,8 +54,11 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
-    // Usuwanie użytkownika
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 }

@@ -18,7 +18,7 @@ public class User {
 
     @NotBlank(message = "Nazwa użytkownika nie może być pusta")
     @Size(min = 3, max = 50, message = "Nazwa użytkownika musi mieć od 3 do 50 znaków")
-    @Column(unique = true, nullable = false, name = "username")
+    @Column(unique = true, name = "username")
     private String userName;
 
     @NotBlank(message = "Hasło nie może być puste")
