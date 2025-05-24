@@ -9,10 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BorrowRequestDto {
-
     @NotBlank(message = "Username cannot be empty")
     private String userName;
-
     @NotBlank(message = "Barcode cannot be empty")
     private String barcode;
 }

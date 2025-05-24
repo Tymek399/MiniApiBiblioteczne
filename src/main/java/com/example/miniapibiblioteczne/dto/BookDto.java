@@ -19,18 +19,13 @@ public class BookDto {
     @NotBlank(message = "Title cannot be empty")
     @Size(min = 2, message = "Title should have at least 2 characters")
     private String title;
-
     @NotBlank(message = "Author cannot be empty")
     private String author;
-
     @NotBlank(message = "ISBN  cannot be empty")
     @Pattern(regexp = "^(97(8|9))?\\d{9}(\\d|X)$", message = "Incorrect ISBN format")
     private String isbn;
-
     @Min(value = 1450, message = "Publication year shouldn't be earlier then 1450")
     private Integer publicationYear;
-
-
     @NotBlank(message = "Barcode cannot be empty")
     private String barcode;
 

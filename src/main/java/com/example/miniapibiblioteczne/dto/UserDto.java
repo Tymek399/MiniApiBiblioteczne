@@ -19,19 +19,14 @@ public class UserDto {
     @NotBlank(message = "Username cannot be empty")
     @Size(min = 3, max = 50, message = "Username should have at least 3 characters and maximum of 50")
     private String userName;
-
     @NotBlank(message = "Password cannot be empty")
     @Size(min = 8, message = "Password should have  at least 8 characters")
     private String password;
-
     @Enumerated(EnumType.STRING)
     private Role role;
-
     @NotBlank(message = "Email cannot be empty")
     @Email(message = "Incorrect email format")
     private String email;
-
-
 
     public static UserDto fromEntity(User user) {
         UserDto dto = new UserDto();
