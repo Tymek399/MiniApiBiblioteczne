@@ -1,38 +1,18 @@
 package com.example.miniapibiblioteczne.dto;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class BorrowRequestDto {
 
-    @NotNull(message = "ID użytkownika nie może być puste")
-    private Long userId;
+    @NotBlank(message = "Username cannot be empty")
+    private String userName;
 
-    @NotNull(message = "ID książki nie może być puste")
-    private Long bookId;
-
-    public BorrowRequestDto() {
-    }
-
-    public BorrowRequestDto(Long userId, Long bookId) {
-        this.userId = userId;
-        this.bookId = bookId;
-    }
-
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public Long getBookId() {
-        return bookId;
-    }
-
-    public void setBookId(Long bookId) {
-        this.bookId = bookId;
-    }
+    @NotBlank(message = "Barcode cannot be empty")
+    private String barcode;
 }

@@ -1,12 +1,11 @@
 package com.example.miniapibiblioteczne.service;
 
+import com.example.miniapibiblioteczne.dto.BookDto;
 import com.example.miniapibiblioteczne.encje.Book;
-import com.example.miniapibiblioteczne.encje.BookCopy;
-import com.example.miniapibiblioteczne.enums.Status;
-import com.example.miniapibiblioteczne.repository.BookCopyRepository;
 import com.example.miniapibiblioteczne.repository.BookRepository;
 import com.example.miniapibiblioteczne.repository.BorrowingRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,71 +13,79 @@ import java.util.Optional;
 
 @Service
 public class BookService {
-    private final BookCopyRepository bookCopyRepository;
-    private final BorrowingRepository borrowingRepository;
-    private final BookRepository bookRepository;
 
-    public BookService(BookRepository bookRepository, BookCopyRepository bookCopyRepository, BorrowingRepository borrowingRepository) {
+    private final BookRepository bookRepository;
+    private final BorrowingRepository borrowingRepository;
+
+    public BookService(BookRepository bookRepository,
+                       BorrowingRepository borrowingRepository) {
         this.bookRepository = bookRepository;
-        this.bookCopyRepository = bookCopyRepository;
         this.borrowingRepository = borrowingRepository;
     }
 
-    public Book addBook(Book book) {
-        return bookRepository.save(book);
+    public BookDto addBook(BookDto bookDto) {
+        Book book = BookDto.toEntity(bookDto);
+        Book saved = bookRepository.save(book);
+        return BookDto.fromEntity(saved);
     }
 
-    public List<Book> getAllBooks() {
-        return bookRepository.findAll();
+    public List<BookDto> getAllBooks() {
+        List<Book> books = bookRepository.findAll();
+        return books.stream()
+                .map(BookDto::fromEntity)
+                .toList();
     }
 
-    public Optional<Book> getBookById(Long id) {
-        return bookRepository.findById(id);
+    public Optional<BookDto> getBookByBarcode(String barcode) {
+        return bookRepository.findByBarcode(barcode)
+                .map(BookDto::fromEntity);
     }
 
-    public Book updateBook(Long id, Book updatedBook) {
-        return bookRepository.findById(id)
-                .map(book -> {
-                    book.setTitle(updatedBook.getTitle());
-                    book.setAuthor(updatedBook.getAuthor());
-                    book.setIsbn(updatedBook.getIsbn());
-                    book.setPublicationYear(updatedBook.getPublicationYear());
-                    return bookRepository.save(book);
-                })
-                .orElseThrow(() -> new RuntimeException("Book not found"));
-    }
-    public void deleteBook(Long id) {
-        bookRepository.deleteById(id);
+    public ResponseEntity<Void> deleteBookByBarcode(String barcode) {
+        Book book = bookRepository.findByBarcode(barcode)
+                .orElseThrow(() -> new EntityNotFoundException("Book with ISBN " + barcode + " not found"));
+        bookRepository.delete(book);
+        return null;
     }
 
-    public List<Book> getBooksByAuthor(String author) {
-        return bookRepository.findByAuthor(author);
+    public List<BookDto> getBooksByAuthor(String author) {
+        List<Book> books = bookRepository.findByAuthor(author);
+        return books.stream()
+                .map(BookDto::fromEntity)
+                .toList();
     }
 
-    public List<Book> getBooksByTitle(String title) {
-        return bookRepository.findByTitle(title);
+    public List<BookDto> getBooksByTitle(String title) {
+        List<Book> books = bookRepository.findByTitle(title);
+        return books.stream()
+                .map(BookDto::fromEntity)
+                .toList();
     }
 
-
-    public boolean hasAvailableCopies(Book book) {
-        List<BookCopy> copies = bookCopyRepository.findByBook(book);
-        for (BookCopy copy : copies) {
-            if (copy.getStatus() == Status.AVAILABLE &&
-                    !borrowingRepository.existsByBookCopyIdAndReturnDateIsNull(copy.getId())) {
-                return true;
-            }
+    public List<BookDto> searchBooks(String title, String author) {
+        if (title != null && !title.isBlank()) {
+            return getBooksByTitle(title);
         }
-        return false;
+        if (author != null && !author.isBlank()) {
+            return getBooksByAuthor(author);
+        }
+        throw new IllegalArgumentException("Search title or author not found");
     }
+    public Optional<BookDto> partialUpdateBook(String isbn, BookDto bookDto) {
+        return bookRepository.findByIsbn(isbn).map(book -> {
+            book.setTitle(bookDto.getTitle());
+            book.setAuthor(bookDto.getAuthor());
+            book.setPublicationYear(bookDto.getPublicationYear());
+            bookRepository.save(book);
 
-    public long countAvailableCopies(Book book) {
-        List<BookCopy> copies = bookCopyRepository.findByBook(book);
+            BookDto updatedDto = new BookDto();
+            updatedDto.setIsbn(book.getIsbn());
+            updatedDto.setTitle(book.getTitle());
+            updatedDto.setAuthor(book.getAuthor());
+            updatedDto.setPublicationYear(book.getPublicationYear());
 
-        return copies.stream()
-                .filter(copy -> copy.getStatus() == Status.AVAILABLE)
-                .filter(copy -> !borrowingRepository.existsByBookCopyIdAndReturnDateIsNull(copy.getId()))
-                .count();
+            return updatedDto;
+        });
     }
 
 }
-

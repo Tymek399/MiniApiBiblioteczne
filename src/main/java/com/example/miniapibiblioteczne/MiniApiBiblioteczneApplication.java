@@ -10,11 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class MiniApiBiblioteczneApplication {
 
     public static void main(String[] args) {
-
       SpringApplication.run(MiniApiBiblioteczneApplication.class, args);
-        PasswordEncoder encoder = new BCryptPasswordEncoder();
-        System.out.println(encoder.encode("user123"));
-        System.out.println(encoder.encode("admin123"));
+
     }
 
 }
