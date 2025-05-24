@@ -8,7 +8,6 @@ import com.example.miniapibiblioteczne.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Service
@@ -73,7 +72,7 @@ public class UserService {
         }
 
         existingUser.setEmail(userDto.getEmail());
-        existingUser.setRole(Role.valueOf(userDto.getRole()));
+        existingUser.setRole(userDto.getRole());
 
         return userRepository.save(existingUser);
     }
