@@ -48,7 +48,7 @@ public class BorrowingService {
         b.setUser(user);
         b.setBook(book);
         b.setBorrowDate(LocalDate.now());
-        b.setDueDate(LocalDate.now().plusWeeks(2));
+        b.setDueDate(LocalDate.now().plusWeeks(4));
         b.setReturnDate(null);
 
         borrowingRepository.save(b);
@@ -73,10 +73,7 @@ public class BorrowingService {
         User user = userRepository.findByUserName(userName.trim())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return borrowingRepository.findByUser(user).stream()
-                .map(borrowing -> {
-                    boolean available = !borrowingRepository.existsByBookAndReturnDateIsNull(borrowing.getBook());
-                    return BorrowingDto.fromEntity(borrowing);
-                })
+                .map(BorrowingDto::fromEntity)
                 .collect(Collectors.toList());
     }
 }

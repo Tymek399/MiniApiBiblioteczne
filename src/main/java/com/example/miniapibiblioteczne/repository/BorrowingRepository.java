@@ -4,7 +4,6 @@ import com.example.miniapibiblioteczne.encje.Book;
 import com.example.miniapibiblioteczne.encje.Borrowing;
 import com.example.miniapibiblioteczne.encje.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;

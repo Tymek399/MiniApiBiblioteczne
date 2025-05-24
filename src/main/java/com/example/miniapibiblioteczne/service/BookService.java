@@ -3,7 +3,6 @@ package com.example.miniapibiblioteczne.service;
 import com.example.miniapibiblioteczne.dto.BookDto;
 import com.example.miniapibiblioteczne.encje.Book;
 import com.example.miniapibiblioteczne.repository.BookRepository;
-import com.example.miniapibiblioteczne.repository.BorrowingRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -15,12 +14,9 @@ import java.util.Optional;
 public class BookService {
 
     private final BookRepository bookRepository;
-    private final BorrowingRepository borrowingRepository;
 
-    public BookService(BookRepository bookRepository,
-                       BorrowingRepository borrowingRepository) {
+    public BookService(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
-        this.borrowingRepository = borrowingRepository;
     }
 
     public BookDto addBook(BookDto bookDto) {
