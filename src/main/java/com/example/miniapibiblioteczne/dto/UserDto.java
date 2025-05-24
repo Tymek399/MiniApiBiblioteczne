@@ -16,19 +16,19 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {
-    @NotBlank(message = "Nazwa użytkownika nie może być pusta")
-    @Size(min = 3, max = 50, message = "Nazwa użytkownika musi mieć od 3 do 50 znaków")
+    @NotBlank(message = "Username cannot be empty")
+    @Size(min = 3, max = 50, message = "Username should have at least 3 characters and maximum of 50")
     private String userName;
 
-    @NotBlank(message = "Hasło nie może być puste")
-    @Size(min = 8, message = "Hasło musi mieć co najmniej 8 znaków")
+    @NotBlank(message = "Password cannot be empty")
+    @Size(min = 8, message = "Password should have  at least 8 characters")
     private String password;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @NotBlank(message = "Email nie może być pusty")
-    @Email(message = "Nieprawidłowy format emaila")
+    @NotBlank(message = "Email cannot be empty")
+    @Email(message = "Incorrect email format")
     private String email;
 
 

@@ -1,7 +1,6 @@
 package com.example.miniapibiblioteczne.dto;
 
 import com.example.miniapibiblioteczne.encje.Book;
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,22 +16,22 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookDto {
-    @NotBlank(message = "Tytuł nie może być pusty")
-    @Size(min = 2, message = "Tytuł musi mieć co najmniej 2 znaki")
+    @NotBlank(message = "Title cannot be empty")
+    @Size(min = 2, message = "Title should have at least 2 characters")
     private String title;
 
-    @NotBlank(message = "Autor nie może być pusty")
+    @NotBlank(message = "Author cannot be empty")
     private String author;
 
-    @NotBlank(message = "ISBN nie może być pusty")
-    @Pattern(regexp = "^(97(8|9))?\\d{9}(\\d|X)$", message = "Nieprawidłowy format ISBN")
+    @NotBlank(message = "ISBN  cannot be empty")
+    @Pattern(regexp = "^(97(8|9))?\\d{9}(\\d|X)$", message = "Incorrect ISBN format")
     private String isbn;
 
-    @Min(value = 1450, message = "Rok publikacji musi być większy lub równy 1450")
+    @Min(value = 1450, message = "Publication year shouldn't be earlier then 1450")
     private Integer publicationYear;
 
 
-    @NotBlank(message = "Kod kreskowy nie może być pusty")
+    @NotBlank(message = "Barcode cannot be empty")
     private String barcode;
 
     public static BookDto fromEntity(Book book) {
