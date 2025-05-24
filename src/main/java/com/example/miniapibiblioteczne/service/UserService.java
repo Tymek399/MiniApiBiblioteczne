@@ -8,6 +8,7 @@ import com.example.miniapibiblioteczne.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Service
@@ -21,15 +22,19 @@ public class UserService {
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
-    public User registerUser(User user) {
-        if (usernameExists(user.getUserName())) {
+    public User registerUser(UserDto userDto) {
+        if (usernameExists(userDto.getUserName())) {
             throw new IllegalArgumentException("username already exists");
         }
-        if (emailExists(user.getEmail())) {
+        if (emailExists(userDto.getEmail())) {
             throw new IllegalArgumentException("Email is already in use");
         }
+        User user = new User();
+        user.setUserName(userDto.getUserName());
+        user.setEmail(userDto.getEmail());
+        user.setPassword(encodePassword(userDto.getPassword()));
+        user.setRole(Role.USER);
 
-        user.setPassword(encodePassword(user.getPassword()));
         return userRepository.save(user);
     }
 

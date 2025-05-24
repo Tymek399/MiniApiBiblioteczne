@@ -19,9 +19,11 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public User registerUser(@Valid @RequestBody User user) {
-        return userService.registerUser(user);
+    public UserDto registerUser(@Valid @RequestBody UserDto userDto) {
+        User registeredUser = userService.registerUser(userDto);
+        return UserDto.fromEntity(registeredUser);
     }
+
 
     @GetMapping("/users/{username}")
     public UserDto getUser(@PathVariable String username) {

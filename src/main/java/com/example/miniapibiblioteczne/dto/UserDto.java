@@ -23,4 +23,12 @@ public class UserDto {
         dto.setRole(user.getRole().name());
         return dto;
     }
+
+    public static User toEntity(UserDto dto) {
+        User user = new User();
+        user.setUserName(dto.getUserName());
+        user.setEmail(dto.getEmail());
+        user.setPassword(dto.getPassword());
+        return user;
+    }
 }
