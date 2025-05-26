@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8" />
+    <title>Mini API Biblioteczne - Panel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 15px;
+            max-width: 900px;
+        }
+        h2 {
+            border-bottom: 2px solid #333;
+            padding-bottom: 5px;
+        }
+        input, button, select, textarea {
+            margin: 5px 0;
+            padding: 5px;
+            width: 100%;
+            max-width: 400px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+        .section {
+            margin-bottom: 40px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ccc;
+        }
+        .result {
+            background: #f7f7f7;
+            padding: 10px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            border-radius: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+<h1>Mini API Biblioteczne - Panel testowy</h1>
+
+<!-- SECTION: KSIĄŻKI -->
+<div class="section" id="books-section">
+    <h2>Książki</h2>
+
+    <button onclick="loadAllBooks()">Pobierz wszystkie książki</button>
+    <div id="books-list" class="result"></div>
+
+    <h3>Dodaj nową książkę</h3>
+    <form id="add-book-form">
+        <label>Tytuł<input type="text" id="book-title" required /></label>
+        <label>Autor<input type="text" id="book-author" required /></label>
+        <label>ISBN<input type="text" id="book-isbn" required /></label>
+        <label>Kod kreskowy<input type="text" id="book-barcode" required /></label>
+        <button type="submit">Dodaj książkę</button>
+    </form>
+
+    <h3>Szukaj książek</h3>
+    <form id="search-book-form">
+        <label>Tytuł (opcjonalnie)<input type="text" id="search-title" /></label>
+        <label>Autor (opcjonalnie)<input type="text" id="search-author" /></label>
+        <button type="submit">Szukaj</button>
+    </form>
+    <div id="search-results" class="result"></div>
+
+    <h3>Operacje na książce</h3>
+    <label>Kod kreskowy do pobrania:<input type="text" id="get-barcode" /></label>
+    <button onclick="getBookByBarcode()">Pobierz książkę po kodzie kreskowym</button>
+    <div id="book-by-barcode" class="result"></div>
+
+    <label>ISBN do aktualizacji:<input type="text" id="patch-isbn" /></label>
+    <form id="patch-book-form">
+        <label>Tytuł<input type="text" id="patch-title" /></label>
+        <label>Autor<input type="text" id="patch-author" /></label>
+        <label>Kod kreskowy<input type="text" id="patch-barcode" /></label>
+        <button type="submit">Zaktualizuj książkę (PATCH)</button>
+    </form>
+    <div id="patch-result" class="result"></div>
+
+    <label>Kod kreskowy do usunięcia:<input type="text" id="delete-barcode" /></label>
+    <button onclick="deleteBook()">Usuń książkę</button>
+    <div id="delete-result" class="result"></div>
+</div>
+
+<!-- SECTION: WYPOŻYCZENIA -->
+<div class="section" id="borrowings-section">
+    <h2>Wypożyczenia</h2>
+
+    <h3>Wypożycz książkę</h3>
+    <form id="borrow-book-form">
+        <label>Nazwa użytkownika<input type="text" id="borrow-username" required /></label>
+        <label>Kod kreskowy książki<input type="text" id="borrow-barcode" required /></label>
+        <button type="submit">Wypożycz</button>
+    </form>
+    <div id="borrow-result" class="result"></div>
+
+    <h3>Zwróć książkę</h3>
+    <label>Kod kreskowy książki do zwrotu:<input type="text" id="return-barcode" /></label>
+    <button onclick="returnBook()">Zwróć książkę</button>
+    <div id="return-result" class="result"></div>
+
+    <h3>Historia wypożyczeń użytkownika</h3>
+    <label>Nazwa użytkownika:<input type="text" id="history-username" /></label>
+    <button onclick="loadBorrowHistory()">Pobierz historię</button>
+    <div id="history-result" class="result"></div>
+</div>
+
+<!-- SECTION: UŻYTKOWNICY -->
+<div class="section" id="users-section">
+    <h2>Użytkownicy</h2>
+
+    <h3>Zarejestruj użytkownika</h3>
+    <form id="register-user-form">
+        <label>Nazwa użytkownika<input type="text" id="register-username" required /></label>
+        <label>Imię<input type="text" id="register-firstname" required /></label>
+        <label>Nazwisko<input type="text" id="register-lastname" required /></label>
+        <label>Email<input type="email" id="register-email" required /></label>
+        <label>Hasło<input type="password" id="register-password" required /></label>
+        <button type="submit">Zarejestruj</button>
+    </form>
+    <div id="register-result" class="result"></div>
+
+    <h3>Pobierz użytkownika</h3>
+    <label>Nazwa użytkownika:<input type="text" id="get-username" /></label>
+    <button onclick="getUser()">Pobierz użytkownika</button>
+    <div id="get-user-result" class="result"></div>
+
+    <h3>Lista wszystkich użytkowników</h3>
+    <button onclick="loadAllUsers()">Pobierz listę użytkowników</button>
+    <div id="users-list" class="result"></div>
+
+    <h3>Aktualizuj użytkownika</h3>
+    <label>Nazwa użytkownika do aktualizacji:<input type="text" id="update-username" /></label>
+    <form id="update-user-form">
+        <label>Imię<input type="text" id="update-firstname" /></label>
+        <label>Nazwisko<input type="text" id="update-lastname" /></label>
+        <label>Email<input type="email" id="update-email" /></label>
+        <label>Hasło<input type="password" id="update-password" /></label>
+        <button type="submit">Aktualizuj użytkownika</button>
+    </form>
+    <div id="update-result" class="result"></div>
+
+    <h3>Usuń użytkownika</h3>
+    <label>Nazwa użytkownika do usunięcia:<input type="text" id="delete-username" /></label>
+    <button onclick="deleteUser()">Usuń użytkownika</button>
+    <div id="delete-user-result" class="result"></div>
+</div>
+
+<script>
+    // --- KSIĄŻKI ---
+
+    async function loadAllBooks() {
+        const el = document.getElementById('books-list');
+        el.textContent = 'Ładowanie...';
+        try {
+            const res = await fetch('/api/books');
+            if (!res.ok) throw new Error(res.statusText);
+            const data = await res.json();
+            el.textContent = JSON.stringify(data, null, 2);
+        } catch (e) {
+            el.textContent = 'Błąd: ' + e.message;
+        }
+    }
+
+    document.getElementById('add-book-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const title = document.getElementById('book-title').value.trim();
+        const author = document.getElementById('book-author').value.trim();
+        const isbn = document.getElementById('book-isbn').value.trim();
+        const barcode = document.getElementById('book-barcode').value.trim();
+
+        try {
+            const res = await fetch('/api/books', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({title, author, isbn, barcode})
+            });
+            if (!res.ok) throw new Error('Nie udało się dodać książki');
+            alert('Książka dodana!');
+            e.target.reset();
+            loadAllBooks();
+        } catch (e) {
+            alert(e.message);
+        }
+    });
+
+    document.getElementById('search-book-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const title = document.getElementById('search-title').value.trim();
+        const author = document.getElementById('search-author').value.trim();
+
+        const params = new URLSearchParams();
+        if(title) params.append('title', title);
+        if(author) params.append('author', author);
+
+        const el = document.getElementById('search-results');
+        el.textContent = 'Ładowanie wyników...';
+
+        try {
+            const res = await fetch('/api/books/search?' + params.toString());
+            if (!res.ok) throw new Error('Błąd podczas wyszukiwania');
+            const data = await res.json();
+            el.textContent = JSON.stringify(data, null, 2);
+        } catch(e) {
+            el.textContent = e.message;
+        }
+    });
+
+    async function getBookByBarcode() {
+        const barcode = document.getElementById('get-barcode').value.trim();
+        const el = document.getElementById('book-by-barcode');
+        if (!barcode) {
+            el.textContent = 'Podaj kod kreskowy.';
+            return;
+        }
+        el.textContent = 'Ładowanie...';
+        try {
+            const res = await fetch('/api/books/' + encodeURIComponent(barcode));
+            if (res.status === 404) {
+                el.textContent = 'Książka nie znaleziona.';
+                return;
+            }
+            if (!res.ok) throw new Error('Błąd');
+            const data = await res.json();
+            el.textContent = JSON.stringify(data, null, 2);
+        } catch (e) {
+            el.textContent = e.message;
+        }
+    }
+
+    document.getElementById('patch-book-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const isbn = document.getElementById('patch-isbn').value.trim();
+        if (!isbn) {
+            alert('Podaj ISBN do aktualizacji!');
+            return;
+        }
+
+        const title = document.getElementById('patch-title').value.trim();
+        const author = document.getElementById('patch-author').value.trim();
+        const barcode = document.getElementById('patch-barcode').value.trim();
+
+        // Budujemy obiekt tylko z wypełnionymi polami (partial update)
+        const updateData = {};
+        if(title) updateData.title = title;
+        if(author) updateData.author = author;
+        if(barcode) updateData.barcode = barcode;
+
+        try {
+            const res = await fetch('/api/books/' + encodeURIComponent(isbn), {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(updateData)
+            });
+            const el = document.getElementById('patch-result');
+            if(res.status === 404) {
+                el.textContent = 'Książka nie znaleziona.';
+                return;
+            }
+            if(!res.ok) throw new Error('Błąd aktualizacji');
+            const data = await res.json();
+            el.textContent = JSON.stringify(data, null, 2);
+            loadAllBooks();
+        } catch(e) {
+            document.getElementById('patch-result').textContent = e.message;
+        }
+    });
+
+    async function deleteBook() {
+        const barcode = document.getElementById('delete-barcode').value.trim();
+        const el = document.getElementById('delete-result');
+        if (!barcode) {
+            el.textContent = 'Podaj kod kreskowy do usunięcia.';
+            return;
+        }
+        try {
+            const res = await fetch('/api/books/' + encodeURIComponent(barcode), {
+                method: 'DELETE'
+            });
+            if (res.status === 404) {
+                el.textContent = 'Książka nie znaleziona.';
+                return;
+            }
+            if (!res.ok) throw new Error('Błąd usuwania');
+            el.textContent = 'Książka usunięta.';
+            loadAllBooks();
+        } catch (e) {
+            el.textContent = e.message;
+        }
+    }
+
+    // --- WYPOŻYCZENIA ---
+
+    document.getElementById('borrow-book-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const userName = document.getElementById('borrow-username').value.trim();
+        const barcode = document.getElementById('borrow-barcode').value.trim();
+        const el = document.getElementById('borrow-result');
+        try {
+            const res = await fetch('/api/borrowings/borrow', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({userName, barcode})
+            });
+            if (!res.ok) throw new Error('Błąd wypożyczenia');
+            const data = await res.json();
+            el.textContent = 'Wypożyczono książkę:\n' + JSON.stringify(data, null, 2);
+        } catch (e) {
+            el.textContent = e.message;
+        }
+    });
+
+    async function returnBook() {
+        const barcode = document.getElementById('return-barcode').value.trim();
+        const el = document.getElementById('return-result');
+        if (!barcode) {
+            el.textContent = 'Podaj kod kreskowy książki do zwrotu.';
+            return;
+        }
+        try {
+            const res = await fetch('/api/borrowings/return/' + encodeURIComponent(barcode), {
+                method: 'POST'
+            });
+            if (!res.ok) throw new Error('Błąd zwrotu książki');
+            const data = await res.json();
+            el.textContent = 'Zwrócono książkę:\n' + JSON.stringify(data, null, 2);
+        } catch (e) {
+            el.textContent = e.message;
+        }
+    }
+
+    async function loadBorrowHistory() {
+        const username = document.getElementById('history-username').value.trim();
+        const el = document.getElementById('history-result');
+        if (!username) {
+            el.textContent = 'Podaj nazwę użytkownika.';
+            return;
+        }
+        el.textContent = 'Ładowanie...';
+        try {
+            const res = await fetch('/api/borrowings/history/' + encodeURIComponent(username));
+            if (!res.ok) throw new Error('Błąd ładowania historii');
+            const data = await res.json();
+            el.textContent = JSON.stringify(data, null, 2);
+        } catch (e) {
+            el.textContent = e.message;
+        }
+    }
+
+    // --- UŻYTKOWNICY ---
+
+    document.getElementById('register-user-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const username = document.getElementById('register-username').value.trim();
+        const firstName = document.getElementById('register-firstname').value.trim();
+        const lastName = document.getElementById('register-lastname').value.trim();
+        const email = document.getElementById('register-email').value.trim();
+        const password = document.getElementById('register-password').value.trim();
+
+        try {
+            const res = await fetch('/api/users/register', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username, firstName, lastName, email, password})
+            });
+            if (!res.ok) {
+                const error = await res.json().catch(() => null);
+                alert('Błąd rejestracji: ' + (error?.message || res.status));
+                return;
+            }
+            const data = await res.json();
+            document.getElementById('register-result').textContent = 'Użytkownik zarejestrowany:\n' + JSON.stringify(data, null, 2);
+            e.target.reset();
+            loadAllUsers();
+        } catch (e) {
+            alert('Błąd: ' + e.message);
+        }
+    });
+
+    async function getUser() {
+        const username = document.getElementById('get-username').value.trim();
+        const el = document.getElementById('get-user-result');
+        if (!username) {
+            el.textContent = 'Podaj nazwę użytkownika.';
+            return;
+        }
+        el.textContent = 'Ładowanie...';
+        try {
+            const res = await fetch('/api/users/users/' + encodeURIComponent(username));
+            if (!res.ok) {
+                el.textContent = 'Użytkownik nie znaleziony.';
+                return;
+            }
+            const data = await res.json();
+            el.textContent = JSON.stringify(data, null, 2);
+        } catch (e) {
+            el.textContent = e.message;
+        }
+    }
+
+    async function loadAllUsers() {
+        const el = document.getElementById('users-list');
+        el.textContent = 'Ładowanie...';
+        try {
+            const res = await fetch('/api/users');
+            if (!res.ok) throw new Error('Błąd ładowania użytkowników');
+            const data = await res.json();
+            el.textContent = JSON.stringify(data, null, 2);
+        } catch (e) {
+            el.textContent = e.message;
+        }
+    }
+
+    document.getElementById('update-user-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const username = document.getElementById('update-username').value.trim();
+        if (!username) {
+            alert('Podaj nazwę użytkownika do aktualizacji!');
+            return;
+        }
+        const firstName = document.getElementById('update-firstname').value.trim();
+        const lastName = document.getElementById('update-lastname').value.trim();
+        const email = document.getElementById('update-email').value.trim();
+        const password = document.getElementById('update-password').value.trim();
+
+        const updateData = {};
+        if(firstName) updateData.firstName = firstName;
+        if(lastName) updateData.lastName = lastName;
+        if(email) updateData.email = email;
+        if(password) updateData.password = password;
+
+        try {
+            const res = await fetch('/api/users/users/' + encodeURIComponent(username), {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(updateData)
+            });
+            const el = document.getElementById('update-result');
+            if(res.status === 404) {
+                el.textContent = 'Użytkownik nie znaleziony.';
+                return;
+            }
+            if(!res.ok) throw new Error('Błąd aktualizacji');
+            const data = await res.json();
+            el.textContent = JSON.stringify(data, null, 2);
+            loadAllUsers();
+        } catch(e) {
+            document.getElementById('update-result').textContent = e.message;
+        }
+    });
+
+    async function deleteUser() {
+        const username = document.getElementById('delete-username').value.trim();
+        const el = document.getElementById('delete-user-result');
+        if (!username) {
+            el.textContent = 'Podaj nazwę użytkownika do usunięcia.';
+            return;
+        }
+        try {
+            const res = await fetch('/api/users/users/' + encodeURIComponent(username), {
+                method: 'DELETE'
+            });
+            if (res.status === 404) {
+                el.textContent = 'Użytkownik nie znaleziony.';
+                return;
+            }
+            if (!res.ok) throw new Error('Błąd usuwania');
+            el.textContent = 'Użytkownik usunięty.';
+            loadAllUsers();
+        } catch (e) {
+            el.textContent = e.message;
+        }
+    }
+
+</script>
+
+</body>
+</html>

@@ -12,6 +12,7 @@ public class MiniApiBiblioteczneApplication {
     public static void main(String[] args) {
       SpringApplication.run(MiniApiBiblioteczneApplication.class, args);
 
+
     }
 
 }

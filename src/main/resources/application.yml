@@ -1,12 +1,9 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/librarydb #spring
+    url: jdbc:mysql://mysql:3306/librarydb
     username: libraryuser
     password: 1234567812345678
     driver-class-name: com.mysql.cj.jdbc.Driver
-    #url: jdbc:mysql://db:3306/librarydb DB_CLOSE_DELAY=-1 #docker
-
-
   jpa:
     hibernate:
       ddl-auto: update
@@ -21,11 +18,9 @@ spring:
 
 logging:
   level:
-    org.springframework:
+    org.springframework: DEBUG
     security: DEBUG
     web: DEBUG
 
-
 server:
   port: 8081
-

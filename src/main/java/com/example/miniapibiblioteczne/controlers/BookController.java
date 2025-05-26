@@ -18,7 +18,7 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    @PostMapping
+        @PostMapping
     public BookDto addBook(@RequestBody @Valid BookDto bookDto) {
         return bookService.addBook(bookDto);
     }
