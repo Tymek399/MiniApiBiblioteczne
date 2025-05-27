@@ -69,19 +69,21 @@ public class BookService {
     }
     public Optional<BookDto> partialUpdateBook(String isbn, BookDto bookDto) {
         return bookRepository.findByIsbn(isbn).map(book -> {
-            book.setTitle(bookDto.getTitle());
-            book.setAuthor(bookDto.getAuthor());
-            book.setPublicationYear(bookDto.getPublicationYear());
-            bookRepository.save(book);
+            if (bookDto.getTitle() != null) {
+                book.setTitle(bookDto.getTitle());
+            }
+            if (bookDto.getAuthor() != null) {
+                book.setAuthor(bookDto.getAuthor());
+            }
+            if (bookDto.getPublicationYear() != null) {
+                book.setPublicationYear(bookDto.getPublicationYear());
+            }
+            if (bookDto.getBarcode() != null) {
+                book.setBarcode(bookDto.getBarcode());
+            }
 
-            BookDto updatedDto = new BookDto();
-            updatedDto.setIsbn(book.getIsbn());
-            updatedDto.setTitle(book.getTitle());
-            updatedDto.setAuthor(book.getAuthor());
-            updatedDto.setPublicationYear(book.getPublicationYear());
-
-            return updatedDto;
+            Book updated = bookRepository.save(book);
+            return BookDto.fromEntity(updated);
         });
     }
-
 }
