@@ -39,16 +39,16 @@ public class BookService {
 
     public ResponseEntity<Void> deleteBookByBarcode(String barcode) {
         Book book = bookRepository.findByBarcode(barcode)
-                .orElseThrow(() -> new EntityNotFoundException("Book with ISBN " + barcode + " not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Book with Barcode " + barcode + " not found"));
         bookRepository.delete(book);
         return null;
     }
 
     public List<BookDto> getBooksByAuthor(String author) {
-        List<Book> books = bookRepository.findByAuthor(author);
-        return books.stream()
-                .map(BookDto::fromEntity)
-                .toList();
+    List<Book> books = bookRepository.findByAuthor(author);
+    return books.stream()
+            .map(BookDto::fromEntity)
+            .toList();
     }
 
     public List<BookDto> getBooksByTitle(String title) {
