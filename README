@@ -1,15 +1,18 @@
-MiniApiBiblioteczne — Instrukcja uruchomienia
+MiniApiBiblioteczne — Instrukcja uruchomienia (Docker)
 
-1. Pobierz gotowe obrazy z Docker Hub:
+1. Wymagane oprogramowanie:
+   - Docker + Docker Compose: https://docs.docker.com/get-docker/
+
+2. Pobierz obrazy Dockera:
    docker pull tymoteuszbolalek/miniapibiblioteczne-mysql:8.0
    docker pull tymoteuszbolalek/miniapibiblioteczne-app:latest
 
-2. Sklonuj repozytorium z plikiem docker-compose.yml:
+3. Sklonuj repozytorium z plikiem docker-compose.yml:
    git clone https://github.com/Tymek399/MiniApiBiblioteczne.git
    cd MiniApiBiblioteczne
 
-3. Uruchom całość za pomocą Docker Compose:
+4. Uruchom aplikację:
    docker-compose up
 
-4. Aplikacja będzie dostępna pod adresem:
+5. Aplikacja dostępna pod adresem:
    http://localhost:8081
