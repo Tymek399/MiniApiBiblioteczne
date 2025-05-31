@@ -415,7 +415,28 @@
             el.textContent = e.message;
         }
     }
+    // Wyszukiwanie książek po tytule i/lub autorze
+document.getElementById('search-book-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const title = document.getElementById('search-title').value.trim();
+    const author = document.getElementById('search-author').value.trim();
+    const el = document.getElementById('search-results');
 
+    const params = new URLSearchParams();
+    if (title) params.append('title', title);
+    if (author) params.append('author', author);
+
+    el.textContent = 'Wyszukiwanie...';
+
+    try {
+        const res = await fetch(`/api/books/search?${params.toString()}`);
+        if (!res.ok) throw new Error('Nie udało się wyszukać książek');
+        const data = await res.json();
+        el.textContent = JSON.stringify(data, null, 2);
+    } catch (e) {
+        el.textContent = e.message;
+    }
+});
 
 
 </script>
