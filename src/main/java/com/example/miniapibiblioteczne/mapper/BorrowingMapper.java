@@ -4,9 +4,8 @@ import com.example.miniapibiblioteczne.dto.BorrowingDto;
 import com.example.miniapibiblioteczne.encje.Borrowing;
 import org.mapstruct.factory.Mappers;
 
-// tu masz builder
-
 public class BorrowingMapper {
+
     private static final BookMapper bookMapper = Mappers.getMapper(BookMapper.class);
 
     public static BorrowingDto fromEntity(Borrowing borrowing) {
@@ -22,3 +21,4 @@ public class BorrowingMapper {
     }
 
 }
+
