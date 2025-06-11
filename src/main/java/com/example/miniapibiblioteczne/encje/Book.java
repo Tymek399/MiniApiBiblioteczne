@@ -23,4 +23,6 @@ public class Book {
     private Integer publicationYear;
     @Column(unique = true)
     private String barcode;
+
+
 }

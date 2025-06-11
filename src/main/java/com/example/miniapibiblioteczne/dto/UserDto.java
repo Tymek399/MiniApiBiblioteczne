@@ -1,6 +1,6 @@
 package com.example.miniapibiblioteczne.dto;
 
-import com.example.miniapibiblioteczne.encje.User;
+
 import com.example.miniapibiblioteczne.enums.Role;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -28,12 +28,6 @@ public class UserDto {
     @Email(message = "Incorrect email format")
     private String email;
 
-    public static UserDto fromEntity(User user) {
-        UserDto dto = new UserDto();
-        dto.setUserName(user.getUserName());
-        dto.setEmail(user.getEmail());
-        dto.setRole(Role.valueOf(user.getRole().name()));
-        return dto;
-    }
+
 
 }

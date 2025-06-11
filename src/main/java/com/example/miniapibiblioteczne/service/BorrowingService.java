@@ -6,30 +6,24 @@ import com.example.miniapibiblioteczne.encje.Book;
 import com.example.miniapibiblioteczne.encje.Borrowing;
 import com.example.miniapibiblioteczne.encje.User;
 import com.example.miniapibiblioteczne.exceptions.ResourceNotFoundException;
+import com.example.miniapibiblioteczne.mapper.BorrowingMapper;
 import com.example.miniapibiblioteczne.repository.BookRepository;
 import com.example.miniapibiblioteczne.repository.BorrowingRepository;
 import com.example.miniapibiblioteczne.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-
+@RequiredArgsConstructor
 @Service
 public class BorrowingService {
 
     private final BorrowingRepository borrowingRepository;
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
-
-    public BorrowingService(BorrowingRepository borrowingRepository,
-                            BookRepository bookRepository,
-                            UserRepository userRepository) {
-        this.borrowingRepository = borrowingRepository;
-        this.bookRepository = bookRepository;
-        this.userRepository = userRepository;
-    }
 
     @Transactional
     public BorrowingDto borrowBook(BorrowRequestDto req) {
@@ -52,7 +46,7 @@ public class BorrowingService {
         b.setReturnDate(null);
 
         borrowingRepository.save(b);
-        return BorrowingDto.fromEntity(b);
+        return BorrowingMapper.fromEntity(b);
     }
 
     public BorrowingDto returnBook(String barcode) {
@@ -66,14 +60,14 @@ public class BorrowingService {
         borrowing.setReturnDate(LocalDate.now());
         borrowingRepository.save(borrowing);
 
-        return BorrowingDto.fromEntity(borrowing);
+        return BorrowingMapper.fromEntity(borrowing);
     }
 
     public List<BorrowingDto> getUserBorrowingHistory(String userName) {
         User user = userRepository.findByUserName(userName.trim())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return borrowingRepository.findByUser(user).stream()
-                .map(BorrowingDto::fromEntity)
+                .map(BorrowingMapper::fromEntity)
                 .collect(Collectors.toList());
     }
 }

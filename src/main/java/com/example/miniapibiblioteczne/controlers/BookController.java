@@ -2,23 +2,22 @@ package com.example.miniapibiblioteczne.controlers;
 
 import com.example.miniapibiblioteczne.dto.BookDto;
 import com.example.miniapibiblioteczne.service.BookService;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/books")
 public class BookController {
 
     private final BookService bookService;
 
-    public BookController(BookService bookService) {
-        this.bookService = bookService;
-    }
-
-        @PostMapping
+    @PostMapping
     public BookDto addBook(@RequestBody @Valid BookDto bookDto) {
         return bookService.addBook(bookDto);
     }
@@ -48,9 +47,17 @@ public class BookController {
     }
 
     @GetMapping("/search")
-    public List<BookDto> searchBooks(
+    public ResponseEntity<List<BookDto>> searchBooks(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String author) {
-        return bookService.searchBooks(title, author);
+
+        List<BookDto> books = bookService.searchBooks(title, author);
+
+        if (books.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(books);
+        }
     }
+
 }
