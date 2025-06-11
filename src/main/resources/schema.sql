@@ -7,7 +7,8 @@ CREATE TABLE users (
                        username VARCHAR(255) UNIQUE,
                        password VARCHAR(255),
                        role VARCHAR(50),
-                       email VARCHAR(255)
+                       email VARCHAR(255),
+                       active BOOLEAN DEFAULT TRUE
 );
 
 CREATE TABLE books (
@@ -29,4 +30,5 @@ CREATE TABLE borrowings (
                             CONSTRAINT fk_book FOREIGN KEY (book_id) REFERENCES books(id),
                             CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
 
